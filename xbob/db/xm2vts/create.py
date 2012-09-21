@@ -142,7 +142,7 @@ def create_tables(args):
 def create(args):
   """Creates or re-creates this database"""
 
-  from bob.db.utils import session
+  from bob.db.utils import session_try_nolock
 
   dbfile = args.files[0]
 
