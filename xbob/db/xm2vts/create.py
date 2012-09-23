@@ -162,7 +162,7 @@ def add_protocols(session, verbose):
               order_by(File.id)
         for k in q:
           if verbose: print "    Adding protocol file '%s'..." % (k.path)
-          session.add(ProtocolFile(pu.id, k.id))
+          pu.files.append(k)
       
       # Adds impostors if required
       if(key == 2 or key == 4):
@@ -173,18 +173,14 @@ def add_protocols(session, verbose):
                 order_by(File.id)
           for k in q:
             if verbose: print "    Adding protocol file (impostor) '%s'..." % (k.path)
-            session.add(ProtocolFile(pu.id, k.id))  
+            pu.files.append(k)
   
 def create_tables(args):
   """Creates all necessary tables (only to be used at the first time)"""
 
   from bob.db.utils import create_engine_try_nolock
   engine = create_engine_try_nolock(args.type, args.files[0], echo=(args.verbose >= 2))
-  Client.metadata.create_all(engine)
-  File.metadata.create_all(engine)
-  Protocol.metadata.create_all(engine)
-  ProtocolPurpose.metadata.create_all(engine)
-  ProtocolFile.metadata.create_all(engine)
+  Base.metadata.create_all(engine)
 
 # Driver API
 # ==========
@@ -206,7 +202,7 @@ def create(args):
 
   # the real work...
   create_tables(args)
-  s = session_try_nolock(args.type, args.files[0], echo=(args.verbose >= 2))
+  s = session_try_nolock(args.type, dbfile, echo=(args.verbose >= 2))
   add_clients(s, args.verbose)
   add_files(s, args.imagedir, args.verbose)
   add_protocols(s, args.verbose)

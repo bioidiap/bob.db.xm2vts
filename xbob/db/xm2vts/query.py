@@ -181,7 +181,7 @@ class Database(object):
     # Now query the database
     retval = []
     if 'world' in groups:
-      q = self.session.query(File).join(Client).join(ProtocolFile).join(ProtocolPurpose).join(Protocol).\
+      q = self.session.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
             filter(Client.sgroup == 'client').\
             filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world'))
       if model_ids:
@@ -191,7 +191,7 @@ class Database(object):
   
     if ('dev' in groups or 'eval' in groups):
       if('enrol' in purposes):
-        q = self.session.query(File).join(Client).join(ProtocolFile).join(ProtocolPurpose).join(Protocol).\
+        q = self.session.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
               filter(Client.sgroup == 'client').\
               filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'enrol'))
         if model_ids:
@@ -200,14 +200,8 @@ class Database(object):
         retval += list(q)
 
       if('probe' in purposes):
-        ltmp = []
-        if( 'dev' in groups):
-          ltmp.append('dev')
-        if( 'eval' in groups):
-          ltmp.append('eval')
-        dev_eval = tuple(ltmp)
         if('client' in classes):
-          q = self.session.query(File).join(Client).join(ProtocolFile).join(ProtocolPurpose).join(Protocol).\
+          q = self.session.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
                 filter(Client.sgroup == 'client').\
                 filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'probe'))
           if model_ids:
@@ -216,14 +210,13 @@ class Database(object):
           retval += list(q)
 
         if('impostor' in classes):
-          q = self.session.query(File).join(Client).join(ProtocolFile).join(ProtocolPurpose).join(Protocol).\
-          ltmp = 'client'
+          ltmp = ['client']
           if( 'dev' in groups):
             ltmp.append('impostorDev')
           if( 'eval' in groups):
             ltmp.append('impostorEval')
           impostorGroups = tuple(ltmp)
-          q = self.session.query(File).join(Client).join(ProtocolFile).join(ProtocolPurpose).join(Protocol).\
+          q = self.session.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
                 filter(Client.sgroup.in_(ltmp)).\
                 filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'probe'))
           retval += list(q)
@@ -257,6 +250,12 @@ class Database(object):
 
     self.assert_validity()
     return self.session.query(Protocol).filter(Protocol.name==name).one()
+
+  def protocol_purposes(self):
+    """Returns all registered protocol purposes"""
+
+    self.assert_validity()
+    return list(self.session.query(ProtocolPurpose))
 
   def purposes(self):
     """Returns the list of allowed purposes"""

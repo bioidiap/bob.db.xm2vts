@@ -5,15 +5,18 @@
 """Table models and functionality for the XM2VTS database.
 """
 
-import os
+import os, numpy
+import bob.db.utils
 from sqlalchemy import Table, Column, Integer, String, ForeignKey, or_, and_
 from bob.db.sqlalchemy_migration import Enum, relationship
-import bob.db.utils
 from sqlalchemy.orm import backref
 from sqlalchemy.ext.declarative import declarative_base
-import numpy
 
 Base = declarative_base()
+
+protocolPurpose_file_association = Table('protocolPurpose_file_association', Base.metadata,
+  Column('protocolPurpose_id', Integer, ForeignKey('protocolPurpose.id')),
+  Column('file_id',  Integer, ForeignKey('file.id')))
 
 class Client(Base):
   """Database clients, marked by an integer identifier and the group they belong to"""
@@ -144,6 +147,8 @@ class ProtocolPurpose(Base):
 
   # For Python: A direct link to the Protocol object that this ProtocolPurpose belongs to
   protocol = relationship("Protocol", backref=backref("purposes", order_by=id))
+  # For Python: A direct link to the File objects associated with this ProtcolPurpose
+  files = relationship("File", secondary=protocolPurpose_file_association, backref=backref("protocolPurposes", order_by=id))
 
   def __init__(self, protocol_id, sgroup, purpose):
     self.protocol_id = protocol_id
@@ -151,29 +156,5 @@ class ProtocolPurpose(Base):
     self.purpose = purpose
 
   def __repr__(self):
-    return "ProtocolPurpose('%s', '%s', '%s')" % (self.protocol_id, self.sgroup, self.purpose)
-
-class ProtocolFile(Base):
-  """XM2VTS protocol purpose/file associations"""
-
-  __tablename__ = 'protocolFile'
-
-  # Unique identifier for this protocol object
-  id = Column(Integer, primary_key=True)
-  # Identifier of the protocol purpose associated with this protocol definition object
-  protocolPurpose_id = Column(Integer, ForeignKey('protocolPurpose.id'))
-  # Identifier of the file associated with this ProtocolFile object
-  file_id = Column(Integer, ForeignKey('file.id'))
-
-  # For Python: A direct link to the ProtocolPurpose object that this ProtocolFile belongs to
-  protocol_purpose = relationship("ProtocolPurpose", backref=backref("protocol_files", order_by=id))
-  # For Python: A direct link to the File object associated with this ProtcolFile
-  file = relationship("File", backref=backref("protocol_files", order_by=id))
-
-  def __init__(self, protocolPurpose_id, file_id):
-    self.protocolPurpose_id = protocolPurpose_id
-    self.file_id = file_id
-
-  def __repr__(self):
-    return "ProtocolFile('%d', '%d')" % (self.protocolPurpose_id, self.file_id)
+    return "ProtocolPurpose('%s', '%s', '%s')" % (self.protocol.name, self.sgroup, self.purpose)
 

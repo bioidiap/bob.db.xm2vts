@@ -6,6 +6,6 @@
 """
 
 from .query import Database
-from .models import Client, File, Protocol
+from .models import Client, File, Protocol, ProtocolPurpose
 
 __all__ = dir()
