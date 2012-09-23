@@ -14,7 +14,7 @@ def nodot(item):
   """Can be used to ignore hidden files, starting with the . character."""
   return item[0] != '.'
 
-def add_clients(session):
+def add_clients(session, verbose):
   """Add clients to the XM2VTS database."""
   # clients
   client_list = [  3,   4,   5,   6,   9,  12,  13,  16,  17,  18, 
@@ -38,12 +38,14 @@ def add_clients(session):
                  332, 333, 334, 336, 337, 338, 339, 340, 342, 357, 
                  358, 359, 360, 362, 364, 365, 366, 369, 370, 371] 
   for cid in client_list:
+    if verbose: print "Adding client '%d' on 'client' group..." % (cid)
     session.add(Client(cid, 'client'))
   # impostorDev 
   impostorDev_list = [  0,   2,   7,  46,  57,  62,  83,  93, 104, 120, 
                       143, 157, 158, 177, 187, 189, 203, 212, 215, 242, 
                       276, 284, 301, 314, 331]
   for cid in impostorDev_list:
+    if verbose: print "Adding client '%d' on 'impostorDev' group..." % (cid)
     session.add(Client(cid, 'impostorDev'))
   # impostorEval 
   impostorEval_list = [  1,   8,  10,  11,  23,  28,  31,  39,  43,  44, 
@@ -54,9 +56,10 @@ def add_clients(session):
                        225, 226, 234, 241, 250, 263, 271, 272, 280, 283, 
                        286, 300, 313, 315, 317, 318, 323, 335, 341, 367]
   for cid in impostorEval_list:
+    if verbose: print "Adding client '%d' on 'impostorEval' group..." % (cid)
     session.add(Client(cid, 'impostorEval'))
                       
-def add_files(session, imagedir):
+def add_files(session, imagedir, verbose):
   """Add files to the XM2VTS database."""
  
   def add_file(session, basename, client_dir, subdir):
@@ -75,66 +78,113 @@ def add_files(session, imagedir):
         client_dir = os.path.join(imagedir_app, cl_dir)
         for filename in filter(nodot, os.listdir(client_dir)):
           basename, extension = os.path.splitext(filename)
+          if verbose: print "Adding file '%s'..." % (basename)
           add_file(session, basename, cl_dir, subdir)
 
-def add_protocols(session):
+def add_protocols(session, verbose):
   """Adds protocols"""
+
+  # 1. DEFINITIONS
+  protocol_definitions = {}
+  all_normal = [(1, 'n', 1), (1, 'n', 2), (2, 'n', 1), (2, 'n', 2), (3, 'n', 1), (3, 'n', 2), (4, 'n', 1), (4, 'n', 2)]
+  all_darkened = [(4, 'l', 1), (4, 'l', 2), (4, 'r', 1), (4, 'r', 2)]
   # Protocol lp1
-  session.add(Protocol('lp1', '', 'enrol', 1, 'n', 1))
-  session.add(Protocol('lp1', '', 'enrol', 2, 'n', 1))
-  session.add(Protocol('lp1', '', 'enrol', 3, 'n', 1))
-  session.add(Protocol('lp1', 'dev', 'probe', 1, 'n', 2))
-  session.add(Protocol('lp1', 'dev', 'probe', 2, 'n', 2))
-  session.add(Protocol('lp1', 'dev', 'probe', 3, 'n', 2))
-  session.add(Protocol('lp1', 'eval', 'probe', 4, 'n', 1))
-  session.add(Protocol('lp1', 'eval', 'probe', 4, 'n', 2))
-  
+  enrol = [(1, 'n', 1), (2, 'n', 1), (3, 'n', 1)]
+  dev_probe_c = [(1, 'n', 2), (2, 'n', 2), (3, 'n', 2)]
+  dev_probe_i = all_normal
+  eval_probe_c = [(4, 'n', 1), (4, 'n', 2)]
+  eval_probe_i = all_normal
+  protocol_definitions['lp1'] = [enrol, dev_probe_c, dev_probe_i, eval_probe_c, eval_probe_i]
+
   # Protocol lp2
-  session.add(Protocol('lp2', '', 'enrol', 1, 'n', 1))
-  session.add(Protocol('lp2', '', 'enrol', 1, 'n', 2))
-  session.add(Protocol('lp2', '', 'enrol', 2, 'n', 1))
-  session.add(Protocol('lp2', '', 'enrol', 2, 'n', 2))
-  session.add(Protocol('lp2', 'dev', 'probe', 3, 'n', 1))
-  session.add(Protocol('lp2', 'dev', 'probe', 3, 'n', 2))
-  session.add(Protocol('lp2', 'eval', 'probe', 4, 'n', 1))
-  session.add(Protocol('lp2', 'eval', 'probe', 4, 'n', 2))
+  enrol = [(1, 'n', 1), (1, 'n', 2), (2, 'n', 1), (2, 'n', 2)]
+  dev_probe_c = [(3, 'n', 1), (3, 'n', 2)]
+  dev_probe_i = all_normal
+  eval_probe_c = [(4, 'n', 1), (4, 'n', 2)]
+  eval_probe_i = all_normal
+  protocol_definitions['lp2'] = [enrol, dev_probe_c, dev_probe_i, eval_probe_c, eval_probe_i]
 
-  # Protocol darkened-lp1
-  session.add(Protocol('darkened-lp1', '', 'enrol', 1, 'n', 1))
-  session.add(Protocol('darkened-lp1', '', 'enrol', 2, 'n', 1))
-  session.add(Protocol('darkened-lp1', '', 'enrol', 3, 'n', 1))
-  session.add(Protocol('darkened-lp1', 'dev', 'probe', 1, 'n', 2))
-  session.add(Protocol('darkened-lp1', 'dev', 'probe', 2, 'n', 2))
-  session.add(Protocol('darkened-lp1', 'dev', 'probe', 3, 'n', 2))
-  session.add(Protocol('darkened-lp1', 'eval', 'probe', 4, 'l', 1))
-  session.add(Protocol('darkened-lp1', 'eval', 'probe', 4, 'l', 2))
-  session.add(Protocol('darkened-lp1', 'eval', 'probe', 4, 'r', 1))
-  session.add(Protocol('darkened-lp1', 'eval', 'probe', 4, 'r', 2))
+   # Protocol darkened-lp1
+  enrol = [(1, 'n', 1), (2, 'n', 1), (3, 'n', 1)]
+  dev_probe_c = [(1, 'n', 2), (2, 'n', 2), (3, 'n', 2)]
+  dev_probe_i = all_normal
+  eval_probe_c = [(4, 'l', 1), (4, 'l', 2), (4, 'r', 1), (4, 'r', 2)]
+  eval_probe_i = all_darkened
+  protocol_definitions['darkened-lp1'] = [enrol, dev_probe_c, dev_probe_i, eval_probe_c, eval_probe_i]
 
-  # Protocol darkened-lp2
-  session.add(Protocol('darkened-lp2', '', 'enrol', 1, 'n', 1))
-  session.add(Protocol('darkened-lp2', '', 'enrol', 1, 'n', 2))
-  session.add(Protocol('darkened-lp2', '', 'enrol', 2, 'n', 1))
-  session.add(Protocol('darkened-lp2', '', 'enrol', 2, 'n', 2))
-  session.add(Protocol('darkened-lp2', 'dev', 'probe', 3, 'n', 1))
-  session.add(Protocol('darkened-lp2', 'dev', 'probe', 3, 'n', 2))
-  session.add(Protocol('darkened-lp2', 'eval', 'probe', 4, 'l', 1))
-  session.add(Protocol('darkened-lp2', 'eval', 'probe', 4, 'l', 2))
-  session.add(Protocol('darkened-lp2', 'eval', 'probe', 4, 'r', 1))
-  session.add(Protocol('darkened-lp2', 'eval', 'probe', 4, 'r', 2))
+   # Protocol darkened-lp2
+  enrol = [(1, 'n', 1), (1, 'n', 2), (2, 'n', 1), (2, 'n', 2)]
+  dev_probe_c = [(3, 'n', 1), (3, 'n', 2)]
+  dev_probe_i = all_normal
+  eval_probe_c = [(4, 'l', 1), (4, 'l', 2), (4, 'r', 1), (4, 'r', 2)]
+  eval_probe_i = all_darkened
+  protocol_definitions['darkened-lp2'] = [enrol, dev_probe_c, dev_probe_i, eval_probe_c, eval_probe_i]
+   
+  # 2. ADDITIONS TO THE SQL DATABASE
+  protocolPurpose_list = [('world', 'train'), ('dev', 'enrol'), ('dev', 'probe'), ('eval', 'enrol'), ('eval', 'probe')]
+  for proto in protocol_definitions:
+    p = Protocol(proto)
+    # Add protocol
+    if verbose: print "Adding protocol %s..." % (proto)
+    session.add(p)
+    session.flush()
+    session.refresh(p)
 
+    # Add protocol purposes
+    for key in range(len(protocolPurpose_list)):
+      purpose = protocolPurpose_list[key]
+      pu = ProtocolPurpose(p.id, purpose[0], purpose[1])
+      if verbose: print "  Adding protocol purpose ('%s','%s')..." % (purpose[0], purpose[1])
+      session.add(pu)
+      session.flush()
+      session.refresh(pu)
 
+      # Add files attached with this protocol purpose
+      list_properties = []
+      list_properties_i = []
+      impostor_val = ''
+      if(key == 0 or key == 1 or key == 3): # world/enrol data
+        list_properties = protocol_definitions[proto][0]
+      elif(key == 2):
+        list_properties = protocol_definitions[proto][1]
+        list_properties_i = protocol_definitions[proto][2]
+        impostor_val = 'impostorDev'
+      elif(key == 4):
+        list_properties = protocol_definitions[proto][3]
+        list_properties_i = protocol_definitions[proto][4]
+        impostor_val = 'impostorEval'
+
+      # Loops over the properties list which defines the protocol
+      for el in list_properties:
+        q = session.query(File).join(Client).\
+              filter(Client.sgroup == 'client').\
+              filter(and_(File.session_id == el[0], File.darkened == el[1], File.shot_id == el[2])).\
+              order_by(File.id)
+        for k in q:
+          if verbose: print "    Adding protocol file '%s'..." % (k.path)
+          session.add(ProtocolFile(pu.id, k.id))
+      
+      # Adds impostors if required
+      if(key == 2 or key == 4):
+        for el in list_properties_i:
+          q = session.query(File).join(Client).\
+                filter(Client.sgroup == impostor_val).\
+                filter(and_(File.session_id == el[0], File.darkened == el[1], File.shot_id == el[2])).\
+                order_by(File.id)
+          for k in q:
+            if verbose: print "    Adding protocol file (impostor) '%s'..." % (k.path)
+            session.add(ProtocolFile(pu.id, k.id))  
+  
 def create_tables(args):
   """Creates all necessary tables (only to be used at the first time)"""
 
-  from bob.db.utils import connection_string
-
-  from sqlalchemy import create_engine
-  engine = create_engine(connection_string(args.type, args.files[0]), 
-      echo=(args.verbose >= 2))
+  from bob.db.utils import create_engine_try_nolock
+  engine = create_engine_try_nolock(args.type, args.files[0], echo=(args.verbose >= 2))
   Client.metadata.create_all(engine)
   File.metadata.create_all(engine)
   Protocol.metadata.create_all(engine)
+  ProtocolPurpose.metadata.create_all(engine)
+  ProtocolFile.metadata.create_all(engine)
 
 # Driver API
 # ==========
@@ -157,9 +207,9 @@ def create(args):
   # the real work...
   create_tables(args)
   s = session_try_nolock(args.type, args.files[0], echo=(args.verbose >= 2))
-  add_clients(s)
-  add_files(s, args.imagedir)
-  add_protocols(s)
+  add_clients(s, args.verbose)
+  add_files(s, args.imagedir, args.verbose)
+  add_protocols(s, args.verbose)
   s.commit()
   s.close()
 

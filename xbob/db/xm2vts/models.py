@@ -5,39 +5,57 @@
 """Table models and functionality for the XM2VTS database.
 """
 
-import sqlalchemy
-from sqlalchemy import Column, Integer, String, ForeignKey, or_, and_
+import os
+from sqlalchemy import Table, Column, Integer, String, ForeignKey, or_, and_
 from bob.db.sqlalchemy_migration import Enum, relationship
+import bob.db.utils
 from sqlalchemy.orm import backref
 from sqlalchemy.ext.declarative import declarative_base
+import numpy
 
 Base = declarative_base()
 
 class Client(Base):
+  """Database clients, marked by an integer identifier and the group they belong to"""
+
   __tablename__ = 'client'
 
+  # Key identifier for the client
   id = Column(Integer, primary_key=True)
-  sgroup = Column(Enum('client','impostorDev','impostorEval')) # do NOT use group (SQL keyword)
+  # Group to which the client belongs to
+  # There is no separate training, development and evaluation group in XM2VTS.
+  # They are split into client, impostorDev and impostorEval (resp. labeled
+  # "impostor evaluation" and "impostor test" in the original paper describing the database)
+  group_choices = ('client','impostorDev','impostorEval')
+  sgroup = Column(Enum(*group_choices)) # do NOT use group (SQL keyword)
 
   def __init__(self, id, group):
     self.id = id
     self.sgroup = group
 
   def __repr__(self):
-    return "<Client('%d', '%s')>" % (self.id, self.sgroup)
+    return "Client('%d', '%s')" % (self.id, self.sgroup)
 
 class File(Base):
+  """Generic file container"""
+
   __tablename__ = 'file'
 
+  # Key identifier for the file
   id = Column(Integer, primary_key=True)
+  # Key identifier of the client associated with this file
   client_id = Column(Integer, ForeignKey('client.id')) # for SQL
+  # Unique path to this file inside the database
   path = Column(String(100), unique=True)
+  # Session identifier 
   session_id = Column(Integer)
+  # Whether it is a darkened image (left 'l' or right 'r') or not 'n'
   darkened = Column(Enum('n','l','r')) # none, left, right
+  # Shot identifier
   shot_id = Column(Integer)
 
-  # for Python
-  client = relationship("Client", backref=backref("client_file"))
+  # For Python: A direct link to the client object that this file belongs to
+  client = relationship("Client", backref=backref("files", order_by=id))
 
   def __init__(self, client_id, path, session_id, darkened, shot_id):
     self.client_id = client_id
@@ -47,27 +65,115 @@ class File(Base):
     self.shot_id = shot_id
 
   def __repr__(self):
-    print "<File('%s')>" % self.path
+    return "File('%s')" % self.path
 
+  def make_path(self, directory=None, extension=None):
+    """Wraps the current path so that a complete path is formed
+
+    Keyword parameters:
+
+    directory
+      An optional directory name that will be prefixed to the returned result.
+
+    extension
+      An optional extension that will be suffixed to the returned filename. The
+      extension normally includes the leading ``.`` character as in ``.jpg`` or
+      ``.hdf5``.
+
+    Returns a string containing the newly generated file path.
+    """
+
+    if not directory: directory = ''
+    if not extension: extension = ''
+
+    return os.path.join(directory, self.path + extension)
+
+  def save(self, data, directory=None, extension='.hdf5'):
+    """Saves the input data at the specified location and using the given
+    extension.
+
+    Keyword parameters:
+
+    data
+      The data blob to be saved (normally a :py:class:`numpy.ndarray`).
+
+    directory
+      If not empty or None, this directory is prefixed to the final file
+      destination
+
+    extension
+      The extension of the filename - this will control the type of output and
+      the codec for saving the input blob.
+    """
+
+    path = self.make_path(directory, extension)
+    bob.utils.makedirs_safe(os.path.dirname(path))
+    bob.io.save(data, path)
 
 class Protocol(Base):
-  __tablename__ = 'protocol'
-  
-  id = Column(Integer, primary_key=True)
-  name = Column(Enum('lp1', 'lp2', 'darkened-lp1', 'darkened-lp2'))
-  sgroup = Column(Enum('', 'dev', 'eval'))
-  purpose = Column(Enum('enrol', 'probe'))
-  session_id = Column(Integer)
-  darkened = Column(Enum('n','l','r')) # none, left, right
-  shot_id = Column(Integer)
+  """XM2VTS protocols"""
 
-  def __init__(self, name, group, purpose, session_id, darkened, shot_id):
+  __tablename__ = 'protocol'
+ 
+  # Unique identifier for this protocol object
+  id = Column(Integer, primary_key=True)
+  # Name of the protocol associated with this object
+  name = Column(String(20), unique=True)
+
+  def __init__(self, name):
     self.name = name
-    self.sgroup = group
-    self.purpose = purpose
-    self.session_id = session_id
-    self.darkened = darkened
-    self.shot_id = shot_id
 
   def __repr__(self):
-    return "<Protocol('%s', '%s', '%s', '%d', '%s', '%d')>" % (self.name, self.sgroup, self.purpose, self.session_id, self.darkened, self.shot_id)
+    return "Protocol('%s')" % (self.name,)
+
+class ProtocolPurpose(Base):
+  """XM2VTS protocol purposes"""
+
+  __tablename__ = 'protocolPurpose'
+
+  # Unique identifier for this protocol purpose object
+  id = Column(Integer, primary_key=True)
+  # Id of the protocol associated with this protocol purpose object
+  protocol_id = Column(Integer, ForeignKey('protocol.id')) # for SQL
+  # Group associated with this protocol purpose object
+  group_choices = ('world', 'dev', 'eval')
+  sgroup = Column(Enum(*group_choices))
+  # Purpose associated with this protocol purpose object
+  purpose_choices = ('train', 'enrol', 'probe')
+  purpose = Column(Enum(*purpose_choices))
+
+  # For Python: A direct link to the Protocol object that this ProtocolPurpose belongs to
+  protocol = relationship("Protocol", backref=backref("purposes", order_by=id))
+
+  def __init__(self, protocol_id, sgroup, purpose):
+    self.protocol_id = protocol_id
+    self.sgroup = sgroup
+    self.purpose = purpose
+
+  def __repr__(self):
+    return "ProtocolPurpose('%s', '%s', '%s')" % (self.protocol_id, self.sgroup, self.purpose)
+
+class ProtocolFile(Base):
+  """XM2VTS protocol purpose/file associations"""
+
+  __tablename__ = 'protocolFile'
+
+  # Unique identifier for this protocol object
+  id = Column(Integer, primary_key=True)
+  # Identifier of the protocol purpose associated with this protocol definition object
+  protocolPurpose_id = Column(Integer, ForeignKey('protocolPurpose.id'))
+  # Identifier of the file associated with this ProtocolFile object
+  file_id = Column(Integer, ForeignKey('file.id'))
+
+  # For Python: A direct link to the ProtocolPurpose object that this ProtocolFile belongs to
+  protocol_purpose = relationship("ProtocolPurpose", backref=backref("protocol_files", order_by=id))
+  # For Python: A direct link to the File object associated with this ProtcolFile
+  file = relationship("File", backref=backref("protocol_files", order_by=id))
+
+  def __init__(self, protocolPurpose_id, file_id):
+    self.protocolPurpose_id = protocolPurpose_id
+    self.file_id = file_id
+
+  def __repr__(self):
+    return "ProtocolFile('%d', '%d')" % (self.protocolPurpose_id, self.file_id)
+

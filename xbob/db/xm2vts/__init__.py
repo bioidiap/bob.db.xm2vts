@@ -6,5 +6,6 @@
 """
 
 from .query import Database
+from .models import Client, File, Protocol
 
-__all__ = ['Database']
+__all__ = dir()
