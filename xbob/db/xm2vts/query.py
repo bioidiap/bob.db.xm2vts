@@ -96,12 +96,11 @@ class Database(object):
 
     self.assert_validity()
     groups = self.__group_replace_alias__(groups)
-    if not groups:
-      groups = ('client', 'impostorDev', 'impostorEval')
     # List of the clients
-    q = self.session.query(Client).filter(Client.sgroup.in_(groups)).\
-          order_by(Client.id)
-
+    q = self.session.query(Client)
+    if groups:
+      q = q.filter(Client.sgroup.in_(groups))
+    q = q.order_by(Client.id)
     return list(q)
 
   def models(self, protocol=None, groups=None):
@@ -129,6 +128,13 @@ class Database(object):
 
     self.assert_validity()
     return self.session.query(Client).filter(Client.id==id).count() != 0
+
+  def client(self, id):
+    """Returns the client object in the database given a certain id. Raises
+    an error if that does not exist."""
+
+    self.assert_validity()
+    return self.session.query(Client).filter(Client.id==id).one()
 
   def objects(self, protocol=None, purposes=None, model_ids=None, groups=None, 
               classes=None):
@@ -175,7 +181,10 @@ class Database(object):
     groups = self.__check_validity__(groups, "group", VALID_GROUPS, VALID_GROUPS)
     classes = self.__check_validity__(classes, "class", VALID_CLASSES, VALID_CLASSES)
 
-    if(isinstance(model_ids,str)):
+    import collections
+    if(model_ids is None): 
+      model_ids = ()
+    elif(not isinstance(model_ids,collections.Iterable)):
       model_ids = (model_ids,)
 
     # Now query the database
@@ -198,7 +207,7 @@ class Database(object):
           q = q.filter(Client.id.in_(model_ids))
         q = q.order_by(File.client_id, File.session_id, File.darkened, File.shot_id)
         retval += list(q)
-
+      
       if('probe' in purposes):
         if('client' in classes):
           q = self.session.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
@@ -209,8 +218,9 @@ class Database(object):
           q = q.order_by(File.client_id, File.session_id, File.darkened, File.shot_id)
           retval += list(q)
 
+        # Exhaustive tests using the impostor{Dev,Eval} sets -> no need to check for model_ids
         if('impostor' in classes):
-          ltmp = ['client']
+          ltmp = []
           if( 'dev' in groups):
             ltmp.append('impostorDev')
           if( 'eval' in groups):
@@ -219,6 +229,7 @@ class Database(object):
           q = self.session.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
                 filter(Client.sgroup.in_(ltmp)).\
                 filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'probe'))
+          q = q.order_by(File.client_id, File.session_id, File.darkened, File.shot_id)
           retval += list(q)
 
     return list(set(retval)) # To remove duplicates
@@ -228,8 +239,7 @@ class Database(object):
 
     self.assert_validity()
     l = self.protocols()
-    retval = []
-    for k in l: retval.append(str(k.name))
+    retval = [str(k.name) for k in l]
     return retval
 
   def protocols(self):

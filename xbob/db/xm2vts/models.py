@@ -7,7 +7,7 @@
 
 import os, numpy
 import bob.db.utils
-from sqlalchemy import Table, Column, Integer, String, ForeignKey, or_, and_
+from sqlalchemy import Table, Column, Integer, String, ForeignKey, or_, and_, not_
 from bob.db.sqlalchemy_migration import Enum, relationship
 from sqlalchemy.orm import backref
 from sqlalchemy.ext.declarative import declarative_base
@@ -37,7 +37,7 @@ class Client(Base):
     self.sgroup = group
 
   def __repr__(self):
-    return "Client('%d', '%s')" % (self.id, self.sgroup)
+    return "Client(%d, '%s')" % (self.id, self.sgroup)
 
 class File(Base):
   """Generic file container"""
