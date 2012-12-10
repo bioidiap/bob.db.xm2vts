@@ -21,25 +21,28 @@
 
 import os, sys
 import unittest
-from .query import Database
+import xbob.db.xm2vts
 
 class XM2VTSDatabaseTest(unittest.TestCase):
   """Performs various tests on the XM2VTS database."""
 
-  def test01_manage_dumplist_1(self):
+  def test01_clients(self):
+    db = xbob.db.xm2vts.Database()
+    self.assertEqual(len(db.clients()), 295)
+    # TODO: add more specific tests
+
+  def test02_files(self):
+    db = xbob.db.xm2vts.Database()
+    self.assertEqual(len(db.objects()), 3440)
+    # TODO: add more specific tests
+
+  def test03_driver_api(self):
 
     from bob.db.script.dbmanage import main
-
     self.assertEqual(main('xm2vts dumplist --self-test'.split()), 0)
-
-  def test02_manage_dumplist_2(self):
-    
-    from bob.db.script.dbmanage import main
-
-    self.assertEqual(main('xm2vts dumplist --protocol=lp1 --classes=client --groups=dev --purposes=enrol --self-test'.split()), 0)
-
-  def test03_manage_checkfiles(self):
-
-    from bob.db.script.dbmanage import main
-
+    self.assertEqual(main('xm2vts dumplist --protocol=lp1 --class=client --group=dev --purpose=enrol --client=10 --self-test'.split()), 0)
     self.assertEqual(main('xm2vts checkfiles --self-test'.split()), 0)
+    self.assertEqual(main('xm2vts reverse frontal/342/342_2_1 --self-test'.split()), 0)
+    self.assertEqual(main('xm2vts path 3011 --self-test'.split()), 0)
+
+

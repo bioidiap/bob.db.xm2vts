@@ -11,11 +11,11 @@ from bob.db import utils
 from .models import *
 from .driver import Interface
 
-INFO = Interface()
+import xbob.db.verification.utils
 
-SQLITE_FILE = INFO.files()[0]
+SQLITE_FILE = Interface().files()[0]
 
-class Database(object):
+class Database(xbob.db.verification.utils.SQLiteDatabase):
   """The dataset class opens and maintains a connection opened to the Database.
 
   It provides many different ways to probe for the characteristics of the data
@@ -23,30 +23,11 @@ class Database(object):
   """
 
   def __init__(self):
-    # opens a session to the database - keep it open until the end
-    self.connect()
-  
-  def connect(self):
-    """Tries connecting or re-connecting to the database"""
-    if not os.path.exists(SQLITE_FILE):
-      self.session = None
-
-    else:
-      self.session = utils.session_try_readonly(INFO.type(), SQLITE_FILE)
-
-  def is_valid(self):
-    """Returns if a valid session has been opened for reading the database"""
-
-    return self.session is not None
-
-  def assert_validity(self):
-    """Raise a RuntimeError if the database backend is not available"""
-
-    if not self.is_valid():
-      raise RuntimeError, "Database '%s' cannot be found at expected location '%s'. Create it and then try re-connecting using Database.connect()" % (INFO.name(), SQLITE_FILE)
+    # call base class constructor
+    xbob.db.verification.utils.SQLiteDatabase.__init__(self, SQLITE_FILE)
 
   def __group_replace_alias__(self, l):
-    """Replace 'dev' by 'client' and 'eval' by 'client' in a list of groups, and 
+    """Replace 'dev' by 'client' and 'eval' by 'client' in a list of groups, and
        returns the new list"""
     if not l: return l
     elif isinstance(l, str): return self.__group_replace_alias__((l,))
@@ -56,23 +37,13 @@ class Database(object):
       else: l2.append(val)
     return tuple(set(l2))
 
-  def __check_validity__(self, l, obj, valid, default):
-    """Checks validity of user input data against a set of valid values"""
-    if not l: return default
-    elif not isinstance(l, (tuple,list)): 
-      return self.__check_validity__((l,), obj, valid, default)
-    for k in l:
-      if k not in valid:
-        raise RuntimeError, 'Invalid %s "%s". Valid values are %s, or lists/tuples of those' % (obj, k, valid)
-    return l
-
   def groups(self):
     """Returns the names of all registered groups"""
 
     return ProtocolPurpose.group_choices
 
   def client_groups(self):
-    """Returns the names of the XM2VTS groups. This is specific to this database which 
+    """Returns the names of the XM2VTS groups. This is specific to this database which
     does not have separate training, development and evaluation sets."""
 
     return Client.group_choices
@@ -83,8 +54,8 @@ class Database(object):
     Keyword Parameters:
 
     protocol
-      One of the XM2VTS protocols ('lp1', 'lp2', 'darkened-lp1', 'darkened-lp2').
-    
+      Ignored.
+
     groups
       The groups to which the clients belong either from ('dev', 'eval', 'world')
       or the specific XM2VTS ones from ('client', 'impostorDev', 'impostorEval')
@@ -94,10 +65,10 @@ class Database(object):
     Returns: A list containing all the clients which have the given properties.
     """
 
-    self.assert_validity()
     groups = self.__group_replace_alias__(groups)
+    groups = self.check_parameters_for_validity(groups, "group", self.client_groups())
     # List of the clients
-    q = self.session.query(Client)
+    q = self.query(Client)
     if groups:
       q = q.filter(Client.sgroup.in_(groups))
     q = q.order_by(Client.id)
@@ -110,33 +81,51 @@ class Database(object):
     Keyword Parameters:
 
     protocol
-      One of the XM2VTS protocols ('lp1', 'lp2', 'darkened-lp1', 'darkened-lp2').
-    
+      Ignored.
+
     groups
       The groups to which the subjects attached to the models belong ('dev', 'eval', 'world')
       Note that 'dev', 'eval' and 'world' are alias for 'client'.
       If no groups are specified, then both clients are impostors are listed.
 
-    Returns: A list containing all the models (model <-> client in XM2VTS) belonging 
+    Returns: A list containing all the models (model <-> client in XM2VTS) belonging
              to the given group.
     """
 
     return self.clients(protocol, groups)
 
+  def model_ids(self, protocol=None, groups=None):
+    """Returns a list of model ids for the specific query by the user.
+       Models correspond to Clients for the XM2VTS database (At most one model per identity).
+
+    Keyword Parameters:
+
+    protocol
+      Ignored.
+
+    groups
+      The groups to which the subjects attached to the models belong ('dev', 'eval', 'world')
+      Note that 'dev', 'eval' and 'world' are alias for 'client'.
+      If no groups are specified, then both clients are impostors are listed.
+
+    Returns: A list containing all the model ids (model <-> client in XM2VTS) belonging
+             to the given group.
+    """
+
+    return [client.id for client in self.clients(protocol, groups)]
+
   def has_client_id(self, id):
     """Returns True if we have a client with a certain integer identifier"""
 
-    self.assert_validity()
-    return self.session.query(Client).filter(Client.id==id).count() != 0
+    return self.query(Client).filter(Client.id==id).count() != 0
 
   def client(self, id):
     """Returns the client object in the database given a certain id. Raises
     an error if that does not exist."""
 
-    self.assert_validity()
-    return self.session.query(Client).filter(Client.id==id).one()
+    return self.query(Client).filter(Client.id==id).one()
 
-  def objects(self, protocol=None, purposes=None, model_ids=None, groups=None, 
+  def objects(self, protocol=None, purposes=None, model_ids=None, groups=None,
               classes=None):
     """Returns a list of :py:class:`.File` for the specific query by the user.
 
@@ -147,42 +136,35 @@ class Database(object):
 
     purposes
       The purposes required to be retrieved ('enrol', 'probe') or a tuple
-      with several of them. If 'None' is given (this is the default), it is 
+      with several of them. If 'None' is given (this is the default), it is
       considered the same as a tuple with all possible values. This field is
       ignored for the data from the "world" group.
 
     model_ids
-      Only retrieves the files for the provided list of model ids (claimed 
-      client id). The model ids are string.  If 'None' is given (this is 
+      Only retrieves the files for the provided list of model ids (claimed
+      client id). The model ids are string.  If 'None' is given (this is
       the default), no filter over the model_ids is performed.
 
     groups
-      One of the groups ('dev', 'eval', 'world') or a tuple with several of them. 
-      If 'None' is given (this is the default), it is considered the same as a 
+      One of the groups ('dev', 'eval', 'world') or a tuple with several of them.
+      If 'None' is given (this is the default), it is considered the same as a
       tuple with all possible values.
 
     classes
-      The classes (types of accesses) to be retrieved ('client', 'impostor') 
-      or a tuple with several of them. If 'None' is given (this is the 
+      The classes (types of accesses) to be retrieved ('client', 'impostor')
+      or a tuple with several of them. If 'None' is given (this is the
       default), it is considered the same as a tuple with all possible values.
 
     Returns: A list of :py:class:`.File` objects.
     """
 
-    self.assert_validity()
-
-    VALID_PROTOCOLS = self.protocol_names()
-    VALID_PURPOSES = self.purposes()
-    VALID_GROUPS = self.groups()
-    VALID_CLASSES = ('client', 'impostor')
-
-    protocol = self.__check_validity__(protocol, "protocol", VALID_PROTOCOLS, VALID_PROTOCOLS)
-    purposes = self.__check_validity__(purposes, "purpose", VALID_PURPOSES, VALID_PURPOSES)
-    groups = self.__check_validity__(groups, "group", VALID_GROUPS, VALID_GROUPS)
-    classes = self.__check_validity__(classes, "class", VALID_CLASSES, VALID_CLASSES)
+    protocol = self.check_parameters_for_validity(protocol, "protocol", self.protocol_names())
+    purposes = self.check_parameters_for_validity(purposes, "purpose", self.purposes())
+    groups = self.check_parameters_for_validity(groups, "group", self.groups())
+    classes = self.check_parameters_for_validity(classes, "class", ('client', 'impostor'))
 
     import collections
-    if(model_ids is None): 
+    if(model_ids is None):
       model_ids = ()
     elif(not isinstance(model_ids,collections.Iterable)):
       model_ids = (model_ids,)
@@ -190,27 +172,27 @@ class Database(object):
     # Now query the database
     retval = []
     if 'world' in groups:
-      q = self.session.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
+      q = self.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
             filter(Client.sgroup == 'client').\
             filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world'))
       if model_ids:
         q = q.filter(Client.id.in_(model_ids))
       q = q.order_by(File.client_id, File.session_id, File.darkened, File.shot_id)
       retval += list(q)
-  
+
     if ('dev' in groups or 'eval' in groups):
       if('enrol' in purposes):
-        q = self.session.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
+        q = self.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
               filter(Client.sgroup == 'client').\
               filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'enrol'))
         if model_ids:
           q = q.filter(Client.id.in_(model_ids))
         q = q.order_by(File.client_id, File.session_id, File.darkened, File.shot_id)
         retval += list(q)
-      
+
       if('probe' in purposes):
         if('client' in classes):
-          q = self.session.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
+          q = self.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
                 filter(Client.sgroup == 'client').\
                 filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'probe'))
           if model_ids:
@@ -226,7 +208,7 @@ class Database(object):
           if( 'eval' in groups):
             ltmp.append('impostorEval')
           impostorGroups = tuple(ltmp)
-          q = self.session.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
+          q = self.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
                 filter(Client.sgroup.in_(ltmp)).\
                 filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'probe'))
           q = q.order_by(File.client_id, File.session_id, File.darkened, File.shot_id)
@@ -237,7 +219,6 @@ class Database(object):
   def protocol_names(self):
     """Returns all registered protocol names"""
 
-    self.assert_validity()
     l = self.protocols()
     retval = [str(k.name) for k in l]
     return retval
@@ -245,27 +226,23 @@ class Database(object):
   def protocols(self):
     """Returns all registered protocols"""
 
-    self.assert_validity()
-    return list(self.session.query(Protocol))
+    return list(self.query(Protocol))
 
   def has_protocol(self, name):
     """Tells if a certain protocol is available"""
 
-    self.assert_validity()
-    return self.session.query(Protocol).filter(Protocol.name==name).count() != 0
+    return self.query(Protocol).filter(Protocol.name==name).count() != 0
 
   def protocol(self, name):
     """Returns the protocol object in the database given a certain name. Raises
     an error if that does not exist."""
 
-    self.assert_validity()
-    return self.session.query(Protocol).filter(Protocol.name==name).one()
+    return self.query(Protocol).filter(Protocol.name==name).one()
 
   def protocol_purposes(self):
     """Returns all registered protocol purposes"""
 
-    self.assert_validity()
-    return list(self.session.query(ProtocolPurpose))
+    return list(self.query(ProtocolPurpose))
 
   def purposes(self):
     """Returns the list of allowed purposes"""
@@ -293,9 +270,7 @@ class Database(object):
     file ids.
     """
 
-    self.assert_validity()
-
-    fobj = self.session.query(File).filter(File.id.in_(ids))
+    fobj = self.query(File).filter(File.id.in_(ids))
     retval = []
     for p in ids:
       retval.extend([k.make_path(prefix, suffix) for k in fobj if k.id == p])
@@ -313,9 +288,8 @@ class Database(object):
     Returns a list (that may be empty).
     """
 
-    self.assert_validity()
-
-    fobj = self.session.query(File).filter(File.path.in_(paths))
+    fobj = self.query(File).filter(File.path.in_(paths))
+    retval = []
     for p in paths:
       retval.extend([k.id for k in fobj if k.path == p])
     return retval
