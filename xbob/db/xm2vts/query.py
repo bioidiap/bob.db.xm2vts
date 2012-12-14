@@ -172,7 +172,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase):
     # Now query the database
     retval = []
     if 'world' in groups:
-      q = self.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
+      q = self.query(File).join(Client).join((ProtocolPurpose, File.protocolPurposes)).join(Protocol).\
             filter(Client.sgroup == 'client').\
             filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup == 'world'))
       if model_ids:
@@ -182,7 +182,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase):
 
     if ('dev' in groups or 'eval' in groups):
       if('enrol' in purposes):
-        q = self.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
+        q = self.query(File).join(Client).join((ProtocolPurpose, File.protocolPurposes)).join(Protocol).\
               filter(Client.sgroup == 'client').\
               filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'enrol'))
         if model_ids:
@@ -192,7 +192,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase):
 
       if('probe' in purposes):
         if('client' in classes):
-          q = self.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
+          q = self.query(File).join(Client).join((ProtocolPurpose, File.protocolPurposes)).join(Protocol).\
                 filter(Client.sgroup == 'client').\
                 filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'probe'))
           if model_ids:
@@ -208,7 +208,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase):
           if( 'eval' in groups):
             ltmp.append('impostorEval')
           impostorGroups = tuple(ltmp)
-          q = self.query(File).join(Client).join(ProtocolPurpose, File.protocolPurposes).join(Protocol).\
+          q = self.query(File).join(Client).join((ProtocolPurpose, File.protocolPurposes)).join(Protocol).\
                 filter(Client.sgroup.in_(ltmp)).\
                 filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'probe'))
           q = q.order_by(File.client_id, File.session_id, File.darkened, File.shot_id)
