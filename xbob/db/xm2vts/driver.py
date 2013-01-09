@@ -76,7 +76,7 @@ def reverse(args):
     output = null()
 
   r = db.reverse(args.path)
-  for id in r: output.write('%d\n' % id)
+  for f in r: output.write('%d\n' % f.id)
 
   if not r: return 1
 

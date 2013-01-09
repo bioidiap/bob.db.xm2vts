@@ -31,7 +31,7 @@ class XM2VTSDatabaseTest(unittest.TestCase):
     self.assertEqual(len(db.clients()), 295)
     # TODO: add more specific tests
 
-  def test02_files(self):
+  def test02_objects(self):
     db = xbob.db.xm2vts.Database()
     self.assertEqual(len(db.objects()), 3440)
     # TODO: add more specific tests

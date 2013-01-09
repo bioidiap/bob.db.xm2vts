@@ -24,7 +24,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase):
 
   def __init__(self):
     # call base class constructor
-    xbob.db.verification.utils.SQLiteDatabase.__init__(self, SQLITE_FILE)
+    xbob.db.verification.utils.SQLiteDatabase.__init__(self, SQLITE_FILE, File)
 
   def __group_replace_alias__(self, l):
     """Replace 'dev' by 'client' and 'eval' by 'client' in a list of groups, and
@@ -248,49 +248,4 @@ class Database(xbob.db.verification.utils.SQLiteDatabase):
     """Returns the list of allowed purposes"""
 
     return ProtocolPurpose.purpose_choices
-
-  def paths(self, ids, prefix='', suffix=''):
-    """Returns a full file paths considering particular file ids, a given
-    directory and an extension
-
-    Keyword Parameters:
-
-    id
-      The ids of the object in the database table "file". This object should be
-      a python iterable (such as a tuple or list).
-
-    prefix
-      The bit of path to be prepended to the filename stem
-
-    suffix
-      The extension determines the suffix that will be appended to the filename
-      stem.
-
-    Returns a list (that may be empty) of the fully constructed paths given the
-    file ids.
-    """
-
-    fobj = self.query(File).filter(File.id.in_(ids))
-    retval = []
-    for p in ids:
-      retval.extend([k.make_path(prefix, suffix) for k in fobj if k.id == p])
-    return retval
-
-  def reverse(self, paths):
-    """Reverses the lookup: from certain stems, returning file ids
-
-    Keyword Parameters:
-
-    paths
-      The filename stems I'll query for. This object should be a python
-      iterable (such as a tuple or list)
-
-    Returns a list (that may be empty).
-    """
-
-    fobj = self.query(File).filter(File.path.in_(paths))
-    retval = []
-    for p in paths:
-      retval.extend([k.id for k in fobj if k.path == p])
-    return retval
 
