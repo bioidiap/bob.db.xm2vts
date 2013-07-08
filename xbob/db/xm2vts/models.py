@@ -70,6 +70,36 @@ class File(Base, xbob.db.verification.utils.File):
     self.darkened = darkened
     self.shot_id = shot_id
 
+class Annotation(Base):
+  """Annotations of the XM2VTS database consists only of the left and right eye positions.
+  There is exactly one annotation for each file."""
+  __tablename__ = 'annotation'
+
+  id = Column(Integer, primary_key=True)
+  file_id = Column(Integer, ForeignKey('file.id'))
+
+  le_x = Column(Integer) # left eye
+  le_y = Column(Integer)
+  re_x = Column(Integer) # right eye
+  re_y = Column(Integer)
+
+  def __init__(self, file_id, eyes):
+    self.file_id = file_id
+
+    assert len(eyes) == 4
+    self.re_x = int(eyes[0])
+    self.re_y = int(eyes[1])
+    self.le_x = int(eyes[2])
+    self.le_y = int(eyes[3])
+
+  def __call__(self):
+    """Returns the annotations of this database in a dictionary: {'reye' : (re_y, re_x), 'leye' : (le_y, le_x)}."""
+    return {'reye' : (self.re_y, self.re_x), 'leye' : (self.le_y, self.le_x) }
+
+  def __repr__(self):
+    return "<Annotation('%s': 'reye'=%dx%d, 'leye'=%dx%d)>" % (self.file_id, self.re_y, self.re_x, self.le_y, self.le_x)
+
+
 class Protocol(Base):
   """XM2VTS protocols"""
 

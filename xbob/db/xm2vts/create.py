@@ -83,6 +83,27 @@ def add_files(session, imagedir, verbose):
           if verbose>1: print "  Adding file '%s'..." % (basename)
           add_file(session, basename, cl_dir, subdir)
 
+def add_annotations(session, annotdir, verbose):
+  """Add files (and clients) to the BANCA database."""
+
+  def read_annotation(filename, file_id):
+    # read the eye positions, which are stored as four integers in one line
+    line = open(filename, 'r').readline()
+    positions = line.split()
+    assert len(positions) == 4
+    return Annotation(file_id, positions)
+
+  # iterate though all stored images and try to access the annotations
+  session.flush()
+  if verbose: print "Adding annotations from directory '%s' ..."%annotdir
+  files = session.query(File)
+  for f in files:
+    annot_file = os.path.join(annotdir, os.path.basename(f.path) + '.pos')
+    if os.path.exists(annot_file):
+      if verbose>1: print "  Adding annotation '%s'..." %(annot_file, )
+      session.add(read_annotation(annot_file, f.id))
+
+
 def add_protocols(session, verbose):
   """Adds protocols"""
 
@@ -208,6 +229,11 @@ def create(args):
   add_clients(s, args.verbose)
   add_files(s, args.imagedir, args.verbose)
   add_protocols(s, args.verbose)
+  if args.annotsub:
+    for subdir in args.annotsub:
+      add_annotations(s, os.path.join(args.annotdir, subdir), args.verbose)
+  else:
+    add_annotations(s, args.annotdir, args.verbose)
   s.commit()
   s.close()
 
@@ -219,5 +245,7 @@ def add_command(subparsers):
   parser.add_argument('-R', '--recreate', action='store_true', help="If set, I'll first erase the current database")
   parser.add_argument('-v', '--verbose', action='count', help="Do SQL operations in a verbose way?")
   parser.add_argument('-D', '--imagedir', metavar='DIR', default='/idiap/resource/database/xm2vtsdb/images/', help="Change the relative path to the directory containing the images of the XM2VTS database.")
+  parser.add_argument('-A', '--annotdir', metavar='DIR', default='/idiap/group/vision/visidiap/databases/groundtruth/xm2vts/', help="Change the relative path to the directory containing the annotations of the XM2VTS database (defaults to %(default)s)")
+  parser.add_argument('-S', '--annotsub', metavar='DIR', nargs='+', default=('normal/eyecenter', 'darkened/eyecenter'), help="Sub-directories of the XM2VTS annotation directory to consider (defaults to %(default)s)")
 
   parser.set_defaults(func=create) #action

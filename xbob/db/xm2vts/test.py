@@ -36,7 +36,22 @@ class XM2VTSDatabaseTest(unittest.TestCase):
     self.assertEqual(len(db.objects()), 3440)
     # TODO: add more specific tests
 
-  def test03_driver_api(self):
+  def test03_annotations(self):
+    # Tests that for all files the annotated eye positions exist and are in correct order
+    db = xbob.db.xm2vts.Database()
+
+    for f in db.objects():
+      annotations = db.annotations(f.id)
+      self.assertTrue(annotations is not None)
+      self.assertEqual(len(annotations), 2)
+      self.assertTrue('leye' in annotations)
+      self.assertTrue('reye' in annotations)
+      self.assertEqual(len(annotations['reye']), 2)
+      self.assertEqual(len(annotations['leye']), 2)
+      # assert that the eye positions are not exchanged
+      self.assertTrue(annotations['leye'][1] > annotations['reye'][1])
+
+  def test04_driver_api(self):
 
     from bob.db.script.dbmanage import main
     self.assertEqual(main('xm2vts dumplist --self-test'.split()), 0)
