@@ -248,8 +248,7 @@ def add_command(subparsers):
   parser.add_argument('-R', '--recreate', action='store_true', help="If set, I'll first erase the current database")
   parser.add_argument('-v', '--verbose', action='count', help="Do SQL operations in a verbose way?")
   parser.add_argument('-D', '--imagedir', metavar='DIR', default='/idiap/resource/database/xm2vtsdb/images/', help="Change the relative path to the directory containing the images of the XM2VTS database.")
-  parser.add_argument('-A', '--annotdir', metavar='DIR', default='/idiap/group/vision/visidiap/databases/groundtruth/xm2vts/', help="Change the relative path to the directory containing the annotations of the XM2VTS database (defaults to %(default)s)")
-  # TODO: remove the default of this option when the annotations are in the corrected format
-  parser.add_argument('-S', '--annotsub', metavar='DIR', nargs='+', default=('normal/eyecenter', 'darkened/eyecenter'), help="Sub-directories of the XM2VTS annotation directory to consider, which will replace the stem path of the registered Files (defaults to %(default)s)")
+  parser.add_argument('-A', '--annotdir', metavar='DIR', default='/idiap/group/biometric/annotations/xm2vts/', help="Change the relative path to the directory containing the annotations of the XM2VTS database (defaults to %(default)s)")
+  parser.add_argument('-S', '--annotsub', metavar='DIR', nargs='+', help="Sub-directories of the XM2VTS annotation directory to consider, which will replace the stem path of the registered Files")
 
   parser.set_defaults(func=create) #action
