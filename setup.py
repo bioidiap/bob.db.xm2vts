@@ -9,7 +9,7 @@ from setuptools import setup, find_packages
 setup(
 
     name='xbob.db.xm2vts',
-    version='1.1.1',
+    version='1.1.2a0',
     description='XM2VTS Database Access API for Bob',
     url='http://github.com/bioidiap/xbob.db.xm2vts',
     license='GPLv3',
