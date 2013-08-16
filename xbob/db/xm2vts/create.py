@@ -37,16 +37,16 @@ def add_clients(session, verbose):
                  316, 319, 320, 321, 322, 324, 325, 328, 329, 330,
                  332, 333, 334, 336, 337, 338, 339, 340, 342, 357,
                  358, 359, 360, 362, 364, 365, 366, 369, 370, 371]
-  if verbose: print "Adding clients..."
+  if verbose: print("Adding clients...")
   for cid in client_list:
-    if verbose>1: print "  Adding client '%d' on 'client' group..." % (cid)
+    if verbose>1: print("  Adding client '%d' on 'client' group..." % (cid))
     session.add(Client(cid, 'client'))
   # impostorDev
   impostorDev_list = [  0,   2,   7,  46,  57,  62,  83,  93, 104, 120,
                       143, 157, 158, 177, 187, 189, 203, 212, 215, 242,
                       276, 284, 301, 314, 331]
   for cid in impostorDev_list:
-    if verbose>1: print "  Adding client '%d' on 'impostorDev' group..." % (cid)
+    if verbose>1: print("  Adding client '%d' on 'impostorDev' group..." % (cid))
     session.add(Client(cid, 'impostorDev'))
   # impostorEval
   impostorEval_list = [  1,   8,  10,  11,  23,  28,  31,  39,  43,  44,
@@ -57,7 +57,7 @@ def add_clients(session, verbose):
                        225, 226, 234, 241, 250, 263, 271, 272, 280, 283,
                        286, 300, 313, 315, 317, 318, 323, 335, 341, 367]
   for cid in impostorEval_list:
-    if verbose>1 : print "  Adding client '%d' on 'impostorEval' group..." % (cid)
+    if verbose>1 : print("  Adding client '%d' on 'impostorEval' group..." % (cid))
     session.add(Client(cid, 'impostorEval'))
 
 def add_files(session, imagedir, verbose):
@@ -72,7 +72,7 @@ def add_files(session, imagedir, verbose):
       session.add(File(int(v[0]), os.path.join(subdir, client_dir, basename), 4, v[2][0], int(v[2][1])))
 
   for subdir in ('frontal', 'darkened'):
-    if verbose: print "Adding files of sub-dir '%s'..." % subdir
+    if verbose: print("Adding files of sub-dir '%s'..." % subdir)
     imagedir_app = os.path.join(imagedir,subdir)
     file_list = os.listdir(imagedir_app)
     for cl_dir in filter(nodot, file_list):
@@ -80,7 +80,7 @@ def add_files(session, imagedir, verbose):
         client_dir = os.path.join(imagedir_app, cl_dir)
         for filename in filter(nodot, os.listdir(client_dir)):
           basename, extension = os.path.splitext(filename)
-          if verbose>1: print "  Adding file '%s'..." % (basename)
+          if verbose>1: print("  Adding file '%s'..." % (basename))
           add_file(session, basename, cl_dir, subdir)
 
 def add_annotations(session, annotdir, verbose, only_filename = False):
@@ -95,7 +95,7 @@ def add_annotations(session, annotdir, verbose, only_filename = False):
 
   # iterate though all stored images and try to access the annotations
   session.flush()
-  if verbose: print "Adding annotations from directory '%s' ..."%annotdir
+  if verbose: print("Adding annotations from directory '%s' ..."%annotdir)
   files = session.query(File)
   for f in files:
     if only_filename:
@@ -103,7 +103,7 @@ def add_annotations(session, annotdir, verbose, only_filename = False):
     else:
       annot_file = f.make_path(annotdir, '.pos')
     if os.path.exists(annot_file):
-      if verbose>1: print "  Adding annotation '%s'..." %(annot_file, )
+      if verbose>1: print("  Adding annotation '%s'..." %(annot_file, ))
       session.add(read_annotation(annot_file, f.id))
 
 
@@ -151,7 +151,7 @@ def add_protocols(session, verbose):
   for proto in protocol_definitions:
     p = Protocol(proto)
     # Add protocol
-    if verbose: print "Adding protocol %s..." % (proto)
+    if verbose: print("Adding protocol %s..." % (proto))
     session.add(p)
     session.flush()
     session.refresh(p)
@@ -160,7 +160,7 @@ def add_protocols(session, verbose):
     for key in range(len(protocolPurpose_list)):
       purpose = protocolPurpose_list[key]
       pu = ProtocolPurpose(p.id, purpose[0], purpose[1])
-      if verbose>1: print "  Adding protocol purpose ('%s','%s')..." % (purpose[0], purpose[1])
+      if verbose>1: print("  Adding protocol purpose ('%s','%s')..." % (purpose[0], purpose[1]))
       session.add(pu)
       session.flush()
       session.refresh(pu)
@@ -187,7 +187,7 @@ def add_protocols(session, verbose):
               filter(and_(File.session_id == el[0], File.darkened == el[1], File.shot_id == el[2])).\
               order_by(File.id)
         for k in q:
-          if verbose>1: print "    Adding protocol file '%s'..." % (k.path)
+          if verbose>1: print("    Adding protocol file '%s'..." % (k.path))
           pu.files.append(k)
 
       # Adds impostors if required
@@ -198,7 +198,7 @@ def add_protocols(session, verbose):
                 filter(and_(File.session_id == el[0], File.darkened == el[1], File.shot_id == el[2])).\
                 order_by(File.id)
           for k in q:
-            if verbose>1: print "    Adding protocol file (impostor) '%s'..." % (k.path)
+            if verbose>1: print("    Adding protocol file (impostor) '%s'..." % (k.path))
             pu.files.append(k)
 
 def create_tables(args):
