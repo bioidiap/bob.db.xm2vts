@@ -229,6 +229,15 @@ class Database(xbob.db.verification.utils.SQLiteDatabase):
           q = q.order_by(File.client_id, File.session_id, File.darkened, File.shot_id)
           retval += list(q)
 
+          # Needs to add 'client-impostor' samples
+          q = self.query(File).join(Client).join((ProtocolPurpose, File.protocolPurposes)).join(Protocol).\
+                filter(Client.sgroup == 'client').\
+                filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'probe'))
+          if(len(model_ids) == 1):
+            q = q.filter(not_(Client.id.in_(model_ids)))
+          q = q.order_by(File.client_id, File.session_id, File.darkened, File.shot_id)
+          retval += list(q)
+
     return list(set(retval)) # To remove duplicates
 
   def annotations(self, file_id):
