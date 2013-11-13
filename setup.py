@@ -23,7 +23,7 @@ from setuptools import setup, find_packages
 setup(
 
     name='xbob.db.xm2vts',
-    version='1.1.4a0',
+    version='1.2.1a0',
     description='XM2VTS Database Access API for Bob',
     url='https://pypi.python.org/pypi/xbob.db.xm2vts',
     license='GPLv3',
@@ -41,7 +41,7 @@ setup(
       'setuptools',
       'six',  # py2/3 compatibility library
       'bob',  # base signal proc./machine learning library
-      'xbob.db.verification.utils>=0.1.4' # defines a set of utilities for face verification databases like this one.
+      'xbob.db.verification.utils>=1.0.0' # defines a set of utilities for face verification databases like this one.
     ],
 
     namespace_packages = [
