@@ -23,7 +23,7 @@ from setuptools import setup, find_packages
 setup(
 
     name='xbob.db.xm2vts',
-    version='1.2.1a0',
+    version='1.2.1',
     description='XM2VTS Database Access API for Bob',
     url='https://pypi.python.org/pypi/xbob.db.xm2vts',
     license='GPLv3',

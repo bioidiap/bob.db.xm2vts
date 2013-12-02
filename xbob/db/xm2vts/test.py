@@ -28,6 +28,7 @@ class XM2VTSDatabaseTest(unittest.TestCase):
 
   def test01_clients(self):
     db = xbob.db.xm2vts.Database()
+    self.assertEqual(len(db.groups()), 3)
     self.assertEqual(len(db.clients()), 295)
     self.assertEqual(len(db.clients(groups='client')), 200)
     self.assertEqual(len(db.clients(groups='dev')), 200)
