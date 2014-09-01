@@ -22,15 +22,15 @@ XM2VTS database in the most obvious ways.
 
 import os
 import six
-from bob.db import utils
+from bob.db.base import utils
 from .models import *
 from .driver import Interface
 
-import xbob.db.verification.utils
+import bob.db.verification.utils
 
 SQLITE_FILE = Interface().files()[0]
 
-class Database(xbob.db.verification.utils.SQLiteDatabase):
+class Database(bob.db.verification.utils.SQLiteDatabase):
   """The dataset class opens and maintains a connection opened to the Database.
 
   It provides many different ways to probe for the characteristics of the data
@@ -39,7 +39,7 @@ class Database(xbob.db.verification.utils.SQLiteDatabase):
 
   def __init__(self, original_directory = None, original_extension = '.ppm'):
     # call base class constructor
-    xbob.db.verification.utils.SQLiteDatabase.__init__(self, SQLITE_FILE, File, original_directory=original_directory, original_extension=original_extension)
+    bob.db.verification.utils.SQLiteDatabase.__init__(self, SQLITE_FILE, File, original_directory=original_directory, original_extension=original_extension)
 
   def __group_replace_alias__(self, l):
     """Replace 'dev' by 'client' and 'eval' by 'client' in a list of groups, and

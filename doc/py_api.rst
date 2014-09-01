@@ -5,4 +5,4 @@
  XM2VTS Database
 =================
 
-.. automodule:: xbob.db.xm2vts
+.. automodule:: bob.db.xm2vts

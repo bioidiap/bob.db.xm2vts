@@ -4,16 +4,16 @@
 # Mon 13 Aug 2012 12:38:15 CEST
 #
 # Copyright (C) 2011-2012 Idiap Research Institute, Martigny, Switzerland
-# 
+#
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation, version 3 of the License.
-# 
+#
 # This program is distributed in the hope that it will be useful,
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-# 
+#
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -40,7 +40,6 @@ extensions = [
   'sphinx.ext.autosummary',
   'sphinx.ext.doctest',
   'sphinx.ext.intersphinx',
-  'bob.sphinxext.plot', # ours add source copying to install directory
   ]
 
 # The viewcode extension appeared only on Sphinx >= 1.0.0
@@ -77,7 +76,7 @@ copyright = u'%s, Idiap Research Institute' % time.strftime('%Y')
 # built documents.
 #
 # The short X.Y version.
-from xbob.db.xm2vts.driver import Interface
+from bob.db.xm2vts.driver import Interface
 version = Interface().version()
 # The full version, including alpha/beta/rc tags.
 release = version
@@ -151,7 +150,7 @@ html_favicon = ''
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+#html_static_path = ['_static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -248,7 +247,7 @@ man_pages = [
 ]
 
 
-# We want to remove all private (i.e. _. or __.__) members 
+# We want to remove all private (i.e. _. or __.__) members
 # that are not in the list of accepted functions
 accepted_private_functions = ['__call__']
 
@@ -263,10 +262,10 @@ def member_function_test(app, what, name, obj, skip, options):
       # test if the method is documented
       if not hasattr(obj, '__doc__') or not obj.__doc__:
         return True
-  
+
   # Skips selected members in auto-generated documentation. Unfortunately, old
   # versions of Boost.Python will not generate a __self__ member for static
-  # methods and that screws-up Sphinx processing. 
+  # methods and that screws-up Sphinx processing.
   if sphinx.__version__ < "1.0":
     # We have to remove objects that do not have a __self__ attribute set
     import types
@@ -276,7 +275,7 @@ def member_function_test(app, what, name, obj, skip, options):
         return True
 
     return False
-  
+
 # Default processing flags for sphinx
 autoclass_content = 'both'
 autodoc_member_order = 'bysource'
