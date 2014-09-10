@@ -18,13 +18,14 @@ before_install:
 - sudo apt-get install -qq --force-yes libboost-all-dev libblitz1-dev libhdf5-serial-dev libatlas-dev libatlas-base-dev liblapack-dev
 - if [ -n "${NUMPYSPEC}" ]; then sudo apt-get install -qq gfortran; fi
 - if [ -n "${NUMPYSPEC}" ]; then pip install --upgrade pip setuptools; fi
-- if [ -n "${NUMPYSPEC}" ]; then pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel numpy$NUMPYSPEC matplotlib==1.3.0 sphinx nose==1.3.0; fi
-- pip install coveralls
+- if [ -n "${NUMPYSPEC}" ]; then pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel numpy$NUMPYSPEC; fi
+- pip install --find-links http://wheels.astropy.org/ --find-links http://wheels2.astropy.org/ --use-wheel matplotlib==1.3.0 sphinx nose==1.3.0 jinja2==2.6 coveralls
 install:
 - python bootstrap.py
 - ./bin/buildout
 script:
 - ./bin/python -c 'from bob.db.xm2vts import get_config; print(get_config())'
+- ./bin/bob_dbmanage.py xm2vt2 download
 - ./bin/coverage run --source=bob.db.xm2vts ./bin/nosetests -sv
 - ./bin/sphinx-build -b doctest doc sphinx
 - ./bin/sphinx-build -b html doc sphinx
