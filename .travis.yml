@@ -25,7 +25,7 @@ install:
 - ./bin/buildout
 script:
 - ./bin/python -c 'from bob.db.xm2vts import get_config; print(get_config())'
-- ./bin/bob_dbmanage.py xm2vt2 download
+- ./bin/bob_dbmanage.py xm2vts download
 - ./bin/coverage run --source=bob.db.xm2vts ./bin/nosetests -sv
 - ./bin/sphinx-build -b doctest doc sphinx
 - ./bin/sphinx-build -b html doc sphinx
