@@ -68,7 +68,7 @@ def test_objects():
   assert len(db.objects(protocol='lp1')) == 2360
   assert len(db.objects(protocol='lp1', groups='world')) == 600
   assert len(db.objects(protocol='lp1', groups='dev')) == 1400
-  assert len(db.objects(protocol='lp1', groups='dev', purposes='enrol')) == 600
+  assert len(db.objects(protocol='lp1', groups='dev', purposes='enroll')) == 600
   assert len(db.objects(protocol='lp1', groups='dev', purposes='probe')) == 800
   assert len(db.objects(protocol='lp1', groups='dev', purposes='probe', classes='client')) == 600
   assert len(db.objects(protocol='lp1', groups='dev', purposes='probe', classes='impostor')) == 800
@@ -79,7 +79,7 @@ def test_objects():
   assert len(db.objects(protocol='lp1', groups='dev', purposes='probe', model_ids=[3,4], classes='client')) == 6
   assert len(db.objects(protocol='lp1', groups='dev', purposes='probe', model_ids=[3,4], classes='impostor')) == 800
   assert len(db.objects(protocol='lp1', groups='eval')) == 1560
-  assert len(db.objects(protocol='lp1', groups='eval', purposes='enrol')) == 600
+  assert len(db.objects(protocol='lp1', groups='eval', purposes='enroll')) == 600
   assert len(db.objects(protocol='lp1', groups='eval', purposes='probe')) == 960
   assert len(db.objects(protocol='lp1', groups='eval', purposes='probe', classes='client')) == 400
   assert len(db.objects(protocol='lp1', groups='eval', purposes='probe', classes='impostor')) == 960
@@ -93,7 +93,7 @@ def test_objects():
   assert len(db.objects(protocol='lp2')) == 2360
   assert len(db.objects(protocol='lp2', groups='world')) == 800
   assert len(db.objects(protocol='lp2', groups='dev')) == 1400
-  assert len(db.objects(protocol='lp2', groups='dev', purposes='enrol')) == 800
+  assert len(db.objects(protocol='lp2', groups='dev', purposes='enroll')) == 800
   assert len(db.objects(protocol='lp2', groups='dev', purposes='probe')) == 600
   assert len(db.objects(protocol='lp2', groups='dev', purposes='probe', model_ids=[3])) == 600
   assert len(db.objects(protocol='lp2', groups='dev', purposes='probe', model_ids=[3], classes='client')) == 2
@@ -102,7 +102,7 @@ def test_objects():
   assert len(db.objects(protocol='lp2', groups='dev', purposes='probe', model_ids=[3,4], classes='client')) == 4
   assert len(db.objects(protocol='lp2', groups='dev', purposes='probe', model_ids=[3,4], classes='impostor')) == 600
   assert len(db.objects(protocol='lp2', groups='eval')) == 1760
-  assert len(db.objects(protocol='lp2', groups='eval', purposes='enrol')) == 800
+  assert len(db.objects(protocol='lp2', groups='eval', purposes='enroll')) == 800
   assert len(db.objects(protocol='lp2', groups='eval', purposes='probe')) == 960
   assert len(db.objects(protocol='lp2', groups='eval', purposes='probe', model_ids=[3])) == 960
   assert len(db.objects(protocol='lp2', groups='eval', purposes='probe', model_ids=[3], classes='client')) == 2
@@ -114,7 +114,7 @@ def test_objects():
   assert len(db.objects(protocol='darkened-lp1')) == 2480
   assert len(db.objects(protocol='darkened-lp1', groups='world')) == 600
   assert len(db.objects(protocol='darkened-lp1', groups='dev')) == 1400
-  assert len(db.objects(protocol='darkened-lp1', groups='dev', purposes='enrol')) == 600
+  assert len(db.objects(protocol='darkened-lp1', groups='dev', purposes='enroll')) == 600
   assert len(db.objects(protocol='darkened-lp1', groups='dev', purposes='probe')) == 800
   assert len(db.objects(protocol='darkened-lp1', groups='dev', purposes='probe', classes='client')) == 600
   assert len(db.objects(protocol='darkened-lp1', groups='dev', purposes='probe', classes='impostor')) == 800
@@ -125,7 +125,7 @@ def test_objects():
   assert len(db.objects(protocol='darkened-lp1', groups='dev', purposes='probe', model_ids=[3,4], classes='client')) == 6
   assert len(db.objects(protocol='darkened-lp1', groups='dev', purposes='probe', model_ids=[3,4], classes='impostor')) == 800
   assert len(db.objects(protocol='darkened-lp1', groups='eval')) == 1680
-  assert len(db.objects(protocol='darkened-lp1', groups='eval', purposes='enrol')) == 600
+  assert len(db.objects(protocol='darkened-lp1', groups='eval', purposes='enroll')) == 600
   assert len(db.objects(protocol='darkened-lp1', groups='eval', purposes='probe')) == 1080
   assert len(db.objects(protocol='darkened-lp1', groups='eval', purposes='probe', classes='client')) == 800
   assert len(db.objects(protocol='darkened-lp1', groups='eval', purposes='probe', classes='impostor')) == 1080
@@ -139,7 +139,7 @@ def test_objects():
   assert len(db.objects(protocol='darkened-lp2')) == 2480
   assert len(db.objects(protocol='darkened-lp2', groups='world')) == 800
   assert len(db.objects(protocol='darkened-lp2', groups='dev')) == 1400
-  assert len(db.objects(protocol='darkened-lp2', groups='dev', purposes='enrol')) == 800
+  assert len(db.objects(protocol='darkened-lp2', groups='dev', purposes='enroll')) == 800
   assert len(db.objects(protocol='darkened-lp2', groups='dev', purposes='probe')) == 600
   assert len(db.objects(protocol='darkened-lp2', groups='dev', purposes='probe', model_ids=[3])) == 600
   assert len(db.objects(protocol='darkened-lp2', groups='dev', purposes='probe', model_ids=[3], classes='client')) == 2
@@ -148,7 +148,7 @@ def test_objects():
   assert len(db.objects(protocol='darkened-lp2', groups='dev', purposes='probe', model_ids=[3,4], classes='client')) == 4
   assert len(db.objects(protocol='darkened-lp2', groups='dev', purposes='probe', model_ids=[3,4], classes='impostor')) == 600
   assert len(db.objects(protocol='darkened-lp2', groups='eval')) == 1880
-  assert len(db.objects(protocol='darkened-lp2', groups='eval', purposes='enrol')) == 800
+  assert len(db.objects(protocol='darkened-lp2', groups='eval', purposes='enroll')) == 800
   assert len(db.objects(protocol='darkened-lp2', groups='eval', purposes='probe')) == 1080
   assert len(db.objects(protocol='darkened-lp2', groups='eval', purposes='probe', model_ids=[3])) == 1080
   assert len(db.objects(protocol='darkened-lp2', groups='eval', purposes='probe', model_ids=[3], classes='client')) == 4
@@ -180,7 +180,7 @@ def test_driver_api():
 
   from bob.db.base.script.dbmanage import main
   assert main('xm2vts dumplist --self-test'.split()) == 0
-  assert main('xm2vts dumplist --protocol=lp1 --class=client --group=dev --purpose=enrol --client=10 --self-test'.split()) == 0
+  assert main('xm2vts dumplist --protocol=lp1 --class=client --group=dev --purpose=enroll --client=10 --self-test'.split()) == 0
   assert main('xm2vts checkfiles --self-test'.split()) == 0
   assert main('xm2vts reverse frontal/342/342_2_1 --self-test'.split()) == 0
   assert main('xm2vts path 3011 --self-test'.split()) == 0

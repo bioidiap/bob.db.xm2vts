@@ -143,7 +143,7 @@ class ProtocolPurpose(Base):
   group_choices = ('world', 'dev', 'eval')
   sgroup = Column(Enum(*group_choices))
   # Purpose associated with this protocol purpose object
-  purpose_choices = ('train', 'enrol', 'probe')
+  purpose_choices = ('train', 'enroll', 'probe')
   purpose = Column(Enum(*purpose_choices))
 
   # For Python: A direct link to the Protocol object that this ProtocolPurpose belongs to

@@ -54,14 +54,10 @@ setup(
       'bob.db': [
         'xm2vts = bob.db.xm2vts.driver:Interface',
       ],
-
-      # bob unittest declaration
-      'bob.test': [
-        'xm2vts = bob.db.xm2vts.test',
-      ],
     },
 
     classifiers = [
+      'Framework :: Bob',
       'Development Status :: 4 - Beta',
       'Environment :: Console',
       'Intended Audience :: Developers',

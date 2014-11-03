@@ -129,39 +129,39 @@ def add_protocols(session, verbose):
   all_normal = [(1, 'n', 1), (1, 'n', 2), (2, 'n', 1), (2, 'n', 2), (3, 'n', 1), (3, 'n', 2), (4, 'n', 1), (4, 'n', 2)]
   all_darkened = [(4, 'l', 1), (4, 'l', 2), (4, 'r', 1), (4, 'r', 2)]
   # Protocol lp1
-  enrol = [(1, 'n', 1), (2, 'n', 1), (3, 'n', 1)]
+  enroll = [(1, 'n', 1), (2, 'n', 1), (3, 'n', 1)]
   dev_probe_c = [(1, 'n', 2), (2, 'n', 2), (3, 'n', 2)]
   dev_probe_i = all_normal
   eval_probe_c = [(4, 'n', 1), (4, 'n', 2)]
   eval_probe_i = all_normal
-  protocol_definitions['lp1'] = [enrol, dev_probe_c, dev_probe_i, eval_probe_c, eval_probe_i]
+  protocol_definitions['lp1'] = [enroll, dev_probe_c, dev_probe_i, eval_probe_c, eval_probe_i]
 
   # Protocol lp2
-  enrol = [(1, 'n', 1), (1, 'n', 2), (2, 'n', 1), (2, 'n', 2)]
+  enroll = [(1, 'n', 1), (1, 'n', 2), (2, 'n', 1), (2, 'n', 2)]
   dev_probe_c = [(3, 'n', 1), (3, 'n', 2)]
   dev_probe_i = all_normal
   eval_probe_c = [(4, 'n', 1), (4, 'n', 2)]
   eval_probe_i = all_normal
-  protocol_definitions['lp2'] = [enrol, dev_probe_c, dev_probe_i, eval_probe_c, eval_probe_i]
+  protocol_definitions['lp2'] = [enroll, dev_probe_c, dev_probe_i, eval_probe_c, eval_probe_i]
 
    # Protocol darkened-lp1
-  enrol = [(1, 'n', 1), (2, 'n', 1), (3, 'n', 1)]
+  enroll = [(1, 'n', 1), (2, 'n', 1), (3, 'n', 1)]
   dev_probe_c = [(1, 'n', 2), (2, 'n', 2), (3, 'n', 2)]
   dev_probe_i = all_normal
   eval_probe_c = [(4, 'l', 1), (4, 'l', 2), (4, 'r', 1), (4, 'r', 2)]
   eval_probe_i = all_darkened
-  protocol_definitions['darkened-lp1'] = [enrol, dev_probe_c, dev_probe_i, eval_probe_c, eval_probe_i]
+  protocol_definitions['darkened-lp1'] = [enroll, dev_probe_c, dev_probe_i, eval_probe_c, eval_probe_i]
 
    # Protocol darkened-lp2
-  enrol = [(1, 'n', 1), (1, 'n', 2), (2, 'n', 1), (2, 'n', 2)]
+  enroll = [(1, 'n', 1), (1, 'n', 2), (2, 'n', 1), (2, 'n', 2)]
   dev_probe_c = [(3, 'n', 1), (3, 'n', 2)]
   dev_probe_i = all_normal
   eval_probe_c = [(4, 'l', 1), (4, 'l', 2), (4, 'r', 1), (4, 'r', 2)]
   eval_probe_i = all_darkened
-  protocol_definitions['darkened-lp2'] = [enrol, dev_probe_c, dev_probe_i, eval_probe_c, eval_probe_i]
+  protocol_definitions['darkened-lp2'] = [enroll, dev_probe_c, dev_probe_i, eval_probe_c, eval_probe_i]
 
   # 2. ADDITIONS TO THE SQL DATABASE
-  protocolPurpose_list = [('world', 'train'), ('dev', 'enrol'), ('dev', 'probe'), ('eval', 'enrol'), ('eval', 'probe')]
+  protocolPurpose_list = [('world', 'train'), ('dev', 'enroll'), ('dev', 'probe'), ('eval', 'enroll'), ('eval', 'probe')]
   for proto in protocol_definitions:
     p = Protocol(proto)
     # Add protocol
@@ -183,7 +183,7 @@ def add_protocols(session, verbose):
       list_properties = []
       list_properties_i = []
       impostor_val = ''
-      if(key == 0 or key == 1 or key == 3): # world/enrol data
+      if(key == 0 or key == 1 or key == 3): # world/enroll data
         list_properties = protocol_definitions[proto][0]
       elif(key == 2):
         list_properties = protocol_definitions[proto][1]

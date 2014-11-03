@@ -150,7 +150,7 @@ class Database(bob.db.verification.utils.SQLiteDatabase):
       One of the XM2VTS protocols ('lp1', 'lp2', 'darkened-lp1', 'darkened-lp2').
 
     purposes
-      The purposes required to be retrieved ('enrol', 'probe') or a tuple
+      The purposes required to be retrieved ('enrolll', 'probe') or a tuple
       with several of them. If 'None' is given (this is the default), it is
       considered the same as a tuple with all possible values. This field is
       ignored for the data from the "world" group.
@@ -196,10 +196,10 @@ class Database(bob.db.verification.utils.SQLiteDatabase):
       retval += list(q)
 
     if ('dev' in groups or 'eval' in groups):
-      if('enrol' in purposes):
+      if('enroll' in purposes):
         q = self.query(File).join(Client).join((ProtocolPurpose, File.protocolPurposes)).join(Protocol).\
               filter(Client.sgroup == 'client').\
-              filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'enrol'))
+              filter(and_(Protocol.name.in_(protocol), ProtocolPurpose.sgroup.in_(groups), ProtocolPurpose.purpose == 'enroll'))
         if model_ids:
           q = q.filter(Client.id.in_(model_ids))
         q = q.order_by(File.client_id, File.session_id, File.darkened, File.shot_id)

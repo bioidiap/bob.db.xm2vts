@@ -16,11 +16,11 @@
 # You should have received a copy of the GNU General Public License
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-"""The XM2VTS database
+"""This is the Bob database entry for the XM2VTS database
 """
 
 from .query import Database
-from .models import Client, File, Protocol, ProtocolPurpose
+from .models import Client, File, Protocol, ProtocolPurpose, Annotation
 
 def get_config():
   """Returns a string containing the configuration information.

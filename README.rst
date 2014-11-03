@@ -1,74 +1,43 @@
-=================
- XM2VTS Database
-=================
+.. vim: set fileencoding=utf-8 :
+.. Manuel Guenther <manuel.guenther@idiap.ch>
+.. Fri Oct 31 14:18:57 CET 2014
 
-This package contains the access API and descriptions for the `XM2VTS
-Database <http://www.ee.surrey.ac.uk/CVSSP/xm2vtsdb/>`_. The actual raw data for
-the database should be downloaded from the original URL. This package only
-contains the `Bob <http://www.idiap.ch/software/bob/>`_ accessor methods to use
-the DB directly from python, with our certified protocols.
+.. image:: http://img.shields.io/badge/docs-stable-yellow.png
+   :target: http://pythonhosted.org/bob.db.arface/index.html
+.. image:: http://img.shields.io/badge/docs-latest-orange.png
+   :target: https://www.idiap.ch/software/bob/docs/latest/bioidiap/bob.db.arface/master/index.html
+.. image:: https://travis-ci.org/bioidiap/bob.db.arface.svg?branch=master
+   :target: https://travis-ci.org/bioidiap/bob.db.arface
+.. image:: https://coveralls.io/repos/bioidiap/bob.db.arface/badge.png
+   :target: https://coveralls.io/r/bioidiap/bob.db.arface
+.. image:: https://img.shields.io/badge/github-master-0000c0.png
+   :target: https://github.com/bioidiap/bob.db.arface/tree/master
+.. image:: http://img.shields.io/pypi/v/bob.db.arface.png
+   :target: https://pypi.python.org/pypi/bob.db.arface
+.. image:: http://img.shields.io/pypi/dm/bob.db.arface.png
+   :target: https://pypi.python.org/pypi/bob.db.arface
+.. image:: https://img.shields.io/badge/original-data--files-a000a0.png
+   :target: http://www.ee.surrey.ac.uk/CVSSP/xm2vtsdb
 
-You would normally not install this package unless you are maintaining it. What
-you would do instead is to tie it in at the package you need to **use** it.
-There are a few ways to achieve this:
+===================================
+ XM2VTS Database Interface for Bob
+===================================
 
-1. You can add this package as a requirement at the ``setup.py`` for your own
-   `satellite package
-   <https://github.com/idiap/bob/wiki/Virtual-Work-Environments-with-Buildout>`_
-   or to your Buildout ``.cfg`` file, if you prefer it that way. With this
-   method, this package gets automatically downloaded and installed on your
-   working environment, or
+This package contains an interface for the evaluation protocol of the XM2VTS_ database.
+This package does not contain the original XM2VTS_ data files, which need to be obtained through the link above.
 
-2. You can manually download and install this package using commands like
-   ``easy_install`` or ``pip``.
 
-The package is available in two different distribution formats:
+Installation
+------------
+To install this package -- alone or together with other `Packages of Bob <https://github.com/idiap/bob/wiki/Packages>`_ -- please read the `Installation Instructions <https://github.com/idiap/bob/wiki/Installation>`_.
+For Bob_ to be able to work properly, some dependent packages are required to be installed.
+Please make sure that you have read the `Dependencies <https://github.com/idiap/bob/wiki/Dependencies>`_ for your operating system.
 
-1. You can download it from `PyPI <http://pypi.python.org/pypi>`_, or
+Documentation
+-------------
+For further documentation on this package, please read the `Stable Version <http://pythonhosted.org/bob.db.arface/index.html>`_ or the `Latest Version <https://www.idiap.ch/software/bob/docs/latest/bioidiap/bob.db.arface/master/index.html>`_ of the documentation.
+For a list of tutorials on this or the other packages ob Bob_, or information on submitting issues, asking questions and starting discussions, please visit its website.
 
-2. You can download it in its source form from `its git repository
-   <https://github.com/bioidiap/bob.db.xm2vts>`_. When you download the
-   version at the git repository, you will need to run a command to recreate
-   the backend SQLite file required for its operation. This means that the
-   database raw files must be installed somewhere in this case. With option
-   ``a`` you can run in `dummy` mode and only download the raw data files for
-   the database once you are happy with your setup.
+.. _bob: https://www.idiap.ch/software/bob
+.. _xm2vts: http://www.ee.surrey.ac.uk/CVSSP/xm2vtsdb
 
-You can mix and match points 1/2 and a/b above based on your requirements. Here
-are some examples:
-
-Modify your setup.py and download from PyPI
-===========================================
-
-That is the easiest. Edit your ``setup.py`` in your satellite package and add
-the following entry in the ``install_requires`` section (note: ``...`` means
-`whatever extra stuff you may have in-between`, don't put that on your
-script)::
-
-    install_requires=[
-      ...
-      "bob.db.xm2vts",
-    ],
-
-Proceed normally with your ``boostrap/buildout`` steps and you should be all
-set. That means you can now import the ``bob.db.xm2vts`` namespace into your scripts.
-
-Modify your buildout.cfg and download from git
-==============================================
-
-You will need to add a dependence to `mr.developer
-<http://pypi.python.org/pypi/mr.developer/>`_ to be able to install from our
-git repositories. Your ``buildout.cfg`` file should contain the following
-lines::
-
-  [buildout]
-  ...
-  extensions = mr.developer
-  auto-checkout = *
-  eggs = bob
-         ...
-         bob.db.xm2vts
-
-  [sources]
-  bob.db.xm2vts = git https://github.com/bioidiap/bob.db.xm2vts.git
-  ...
