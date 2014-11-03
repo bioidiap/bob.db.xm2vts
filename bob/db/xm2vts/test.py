@@ -164,7 +164,7 @@ def test_annotations():
   db = bob.db.xm2vts.Database()
 
   for f in db.objects():
-    annotations = db.annotations(f.id)
+    annotations = db.annotations(f)
     assert annotations is not None
     assert len(annotations) == 2
     assert 'leye' in annotations

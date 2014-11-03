@@ -75,6 +75,7 @@ class File(Base, bob.db.verification.utils.File):
 
   # For Python: A direct link to the client object that this file belongs to
   client = relationship("Client", backref=backref("files", order_by=id))
+  annotation = relationship("Annotation", backref=backref("file", order_by=id, uselist=False), uselist=False)
 
   def __init__(self, client_id, path, session_id, darkened, shot_id):
     # call base class constructor
