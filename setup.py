@@ -46,10 +46,7 @@ setup(
 
     install_requires = install_requires,
 
-    namespace_packages = [
-      'bob',
-      'bob.db',
-    ],
+
 
     entry_points = {
       # bob database declaration
