@@ -32,7 +32,7 @@ setup(
     name='bob.db.xm2vts',
     version=version,
     description='XM2VTS Database Access API for Bob',
-    url='https://pypi.python.org/pypi/bob.db.xm2vts',
+    url='https://github.com/bioidiap/bob.db.xm2vts',
     license='GPLv3',
     author='Laurent El Shafey',
     author_email='laurent.el-shafey@idiap.ch',
