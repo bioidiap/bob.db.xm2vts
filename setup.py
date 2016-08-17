@@ -49,10 +49,6 @@ setup(
 
 
     entry_points = {
-      # bob database declaration
-      'bob.db': [
-        'xm2vts = bob.db.xm2vts.driver:Interface',
-      ],
     },
 
     classifiers = [
