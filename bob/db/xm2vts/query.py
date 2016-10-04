@@ -293,17 +293,17 @@ class Database(bob.db.base.SQLiteDatabase):
 
   def t_model_ids(self, protocol, groups = 'dev', **kwargs):
     """Returns the list of model ids used for T-Norm of the given protocol for the given group that satisfy your query.
-    For possible keyword arguments, please check the :py:meth:`tmodel_ids` function."""
+    For possible keyword arguments, please check the `tmodel_ids` function."""
     return self.uniquify(self.tmodel_ids(protocol=protocol, groups=groups, **kwargs))
 
   def t_enroll_files(self, protocol, model_id, groups = 'dev', **kwargs):
     """Returns the list of T-Norm model enrollment File objects from the given model id of the given protocol for the given group that satisfy your query.
-    For possible keyword arguments, please check the :py:meth:`tobjects` function."""
+    For possible keyword arguments, please check the `tobjects` function."""
     return self.uniquify(self.tobjects(protocol=protocol, groups=groups, model_ids=(model_id,), **kwargs))
 
   def z_probe_files(self, protocol, groups = 'dev', **kwargs):
     """Returns the list of Z-Norm probe File objects to probe the model with the given model id of the given protocol for the given group that satisfy your query.
-    For possible keyword arguments, please check the :py:meth:`zobjects` function."""
+    For possible keyword arguments, please check the `zobjects` function."""
     return self.uniquify(self.zobjects(protocol=protocol, groups=groups, **kwargs))
 
 

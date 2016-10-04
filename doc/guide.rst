@@ -14,7 +14,7 @@ The actual raw data for the XM2VTS_ database should be downloaded from the origi
 The Database Interface
 ----------------------
 
-The :py:class:`bob.db.xm2vts.Database` complies with the standard biometric verification database as described in :ref:`commons`, implementing the interface :py:class:`bob.db.base.SQLiteDatabase`.
+The :py:class:`bob.db.xm2vts.Database` complies with the standard biometric verification database as described in `bob.db.base <bob.db.base>`, implementing the interface :py:class:`bob.db.base.SQLiteDatabase`.
 
 .. todo::
    Explain the particularities of the :py:class:`bob.db.xm2vts.Database`.
