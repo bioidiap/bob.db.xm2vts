@@ -79,7 +79,8 @@ class File(Base, bob.db.base.File):
 
   def __init__(self, client_id, path, session_id, darkened, shot_id):
     # call base class constructor
-    bob.db.base.File.__init__(self, client_id = client_id, path = path)
+    bob.db.base.File.__init__(self, path = path)
+    self.client_id = client_id
 
     self.session_id = session_id
     self.darkened = darkened
