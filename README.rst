@@ -2,9 +2,9 @@
 .. Wed 17 Aug 16:34:39 CEST 2016
 
 .. image:: http://img.shields.io/badge/docs-stable-yellow.svg
-   :target: http://pythonhosted.org/bob.db.xm2vts/index.html
+   :target: https://www.idiap.ch/software/bob/docs/bob/bob.db.xm2vts/stable/index.html
 .. image:: http://img.shields.io/badge/docs-latest-orange.svg
-   :target: https://www.idiap.ch/software/bob/docs/latest/bob/bob.db.xm2vts/master/index.html
+   :target: https://www.idiap.ch/software/bob/docs/bob/bob.db.xm2vts/master/index.html
 .. image:: https://gitlab.idiap.ch/bob/bob.db.xm2vts/badges/master/build.svg
    :target: https://gitlab.idiap.ch/bob/bob.db.xm2vts/commits/master
 .. image:: https://gitlab.idiap.ch/bob/bob.db.xm2vts/badges/master/coverage.svg
@@ -12,8 +12,6 @@
 .. image:: https://img.shields.io/badge/gitlab-project-0000c0.svg
    :target: https://gitlab.idiap.ch/bob/bob.db.xm2vts
 .. image:: http://img.shields.io/pypi/v/bob.db.xm2vts.svg
-   :target: https://pypi.python.org/pypi/bob.db.xm2vts
-.. image:: http://img.shields.io/pypi/dm/bob.db.xm2vts.svg
    :target: https://pypi.python.org/pypi/bob.db.xm2vts
 .. image:: https://img.shields.io/badge/original-data--files-a000a0.png
    :target: http://www.ee.surrey.ac.uk/CVSSP/xm2vtsdb
@@ -31,7 +29,7 @@ This package contains an interface for the evaluation protocol of the XM2VTS dat
 Installation
 ------------
 
-Complete Bob's `installation`_ instructions. Then, to install this pacakge,
+Complete Bob's `installation`_ instructions. Then, to install this package,
 run::
 
   $ conda install bob.db.xm2vts
