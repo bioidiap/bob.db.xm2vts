@@ -1,20 +1,14 @@
 .. vim: set fileencoding=utf-8 :
 .. Wed 17 Aug 16:34:39 CEST 2016
 
-.. image:: http://img.shields.io/badge/docs-stable-yellow.svg
-   :target: https://www.idiap.ch/software/bob/docs/bob/bob.db.xm2vts/stable/index.html
-.. image:: http://img.shields.io/badge/docs-latest-orange.svg
+.. image:: https://img.shields.io/badge/docs-available-orage.svg
    :target: https://www.idiap.ch/software/bob/docs/bob/bob.db.xm2vts/master/index.html
-.. image:: https://gitlab.idiap.ch/bob/bob.db.xm2vts/badges/master/build.svg
+.. image:: https://gitlab.idiap.ch/bob/bob.db.xm2vts/badges/master/pipeline.svg
    :target: https://gitlab.idiap.ch/bob/bob.db.xm2vts/commits/master
 .. image:: https://gitlab.idiap.ch/bob/bob.db.xm2vts/badges/master/coverage.svg
    :target: https://gitlab.idiap.ch/bob/bob.db.xm2vts/commits/master
 .. image:: https://img.shields.io/badge/gitlab-project-0000c0.svg
    :target: https://gitlab.idiap.ch/bob/bob.db.xm2vts
-.. image:: http://img.shields.io/pypi/v/bob.db.xm2vts.svg
-   :target: https://pypi.python.org/pypi/bob.db.xm2vts
-.. image:: https://img.shields.io/badge/original-data--files-a000a0.png
-   :target: http://www.ee.surrey.ac.uk/CVSSP/xm2vtsdb
 
 
 =================================
